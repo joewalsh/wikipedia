@@ -3,7 +3,7 @@ import Combine
 
 class SearchViewModel: ObservableObject {
     @Published var term: String = ""
-    @Published var state: State = .idle {
+    @Published private(set) var state: State = .idle {
         didSet {
             searchCancellable?.cancel()
             searchCancellable = nil
