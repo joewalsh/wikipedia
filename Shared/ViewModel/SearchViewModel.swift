@@ -1,0 +1,72 @@
+import Foundation
+import Combine
+
+class SearchViewModel: ObservableObject {
+    @Published var term: String = ""
+    @Published var state: State = .idle {
+        didSet {
+            searchCancellable?.cancel()
+            searchCancellable = nil
+        }
+    }
+
+    enum State {
+        case idle
+        case empty
+        case searching(_ pages: [Page])
+        case results(_ pages: [Page], _ continue: Continuation)
+        case failure(_ error: Error)
+    }
+    
+    private var searchDebouncer: AnyCancellable?
+    
+    init() {
+        searchDebouncer = $term
+            .debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)
+            .sink { [weak self] (term) in
+                self?.search(with: term)
+            }
+    }
+    
+    private let actionAPI: ActionAPIInterface = ActionAPIService(site: Wikipedia(language: .en))
+    
+    private var searchCancellable: AnyCancellable?
+    
+    private func search(with term: String) {
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            state = .idle
+            return
+        }
+        state = .searching([])
+        searchCancellable = actionAPI.search(with: term, continuation: .no)
+            .receive(on: DispatchQueue.main)
+            .map { $0.pages.isEmpty ? State.empty : State.results($0.pages, $0.continuation) }
+            .catch { Just(State.failure($0)) }
+            .assign(to: \.state, on: self)
+    }
+    
+    func searchMore() {
+        assert(Thread.isMainThread)
+        switch state {
+        case .results(let pages, let continuation):
+            switch continuation {
+            case .yes:
+                state = .searching(pages)
+                searchCancellable = actionAPI.search(with: term, continuation: continuation)
+                    .receive(on: DispatchQueue.main)
+                    .map { State.results(pages + $0.pages, $0.continuation) }
+                    .replaceError(with: self.state)
+                    .assign(to: \.state, on: self)
+            case .no:
+                return
+            }
+        default:
+            break
+        }
+    }
+}
+
+
+
+
