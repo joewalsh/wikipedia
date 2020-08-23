@@ -4,7 +4,9 @@ import SwiftUI
 struct WikipediaApp: App {
     var body: some Scene {
         WindowGroup {
-            SearchView(model: SearchViewModel())
+            NavigationView {
+                SearchView(model: SearchViewModel())
+            }
         }
     }
 }

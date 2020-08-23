@@ -6,8 +6,6 @@ struct SearchView: View {
     
     var body: some View {
         VStack {
-            TextField("", text: $model.term)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
             switch model.state {
             case .empty:
                 Spacer()
@@ -18,19 +16,15 @@ struct SearchView: View {
                 Text(error.localizedDescription)
                 Spacer()
             default:
-                List {
-                    ForEach(pages) { page in
-                        Text(page.id.title).onAppear(perform: {
-                            guard paginationTrigger == page.id else {
-                                return
-                            }
-                            model.searchMore()
-                        })
-                    }
-                }
+                Spacer()
             }
+            PagingatedListView(items: pages,
+                               navigationLinkBuilder: model.listItem,
+                               searchTextBinding: $model.term,
+                               onPaginate: model.onPaginate)
         }.padding()
     }
+    
     
     var pages: [Page] {
         switch model.state {
@@ -41,13 +35,6 @@ struct SearchView: View {
         default:
             return []
         }
-    }
-    
-    var paginationTrigger: Page.Identifier? {
-        guard pages.count > 10 else {
-            return nil
-        }
-        return pages[pages.endIndex.advanced(by: -10)].id
     }
 }
 

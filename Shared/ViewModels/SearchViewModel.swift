@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import SwiftUI
 
 class SearchViewModel: ObservableObject {
     @Published var term: String = ""
@@ -14,7 +15,7 @@ class SearchViewModel: ObservableObject {
         case idle
         case empty
         case searching(_ pages: [Page])
-        case results(_ pages: [Page], _ continue: Continuation)
+        case results(_ pages: [Page], _ continuation: Continuation)
         case failure(_ error: Error)
     }
     
@@ -46,7 +47,7 @@ class SearchViewModel: ObservableObject {
             .assign(to: \.state, on: self)
     }
     
-    func searchMore() {
+    func onPaginate() {
         assert(Thread.isMainThread)
         switch state {
         case .results(let pages, let continuation):
@@ -65,8 +66,10 @@ class SearchViewModel: ObservableObject {
             break
         }
     }
+    
+    func listItem(_ page: Page) -> NavigationLink<Text, PageView> {
+        NavigationLink(destination: PageView(page: page)) {
+            Text(page.id.title)
+        }
+    }
 }
-
-
-
-
