@@ -4,6 +4,7 @@ struct PagingatedListView<T: Identifiable, L: View, D: View>: View {
     let items: [T]
     let navigationLinkBuilder: (_ item: T) -> NavigationLink<L, D>
     let searchTextBinding: Binding<String>?
+    var statusMessage: String?
     var paginationTriggerCount: Int = 10
     let onPaginate: () -> Void
     
@@ -14,6 +15,11 @@ struct PagingatedListView<T: Identifiable, L: View, D: View>: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
+                    .padding([.top, .bottom])
+            }
+            if let statusMessage = statusMessage {
+                Text(statusMessage)
+                    .padding([.top, .bottom])
             }
             ForEach(items) { item in
                 navigationLinkBuilder(item).onAppear(perform: {

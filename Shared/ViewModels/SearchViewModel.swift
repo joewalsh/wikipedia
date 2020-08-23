@@ -4,6 +4,29 @@ import SwiftUI
 
 class SearchViewModel: ObservableObject {
     @Published var term: String = ""
+    
+    var statusMessage: String? {
+        switch state {
+        case .empty:
+            return NSLocalizedString("No results", comment: "Shown when there are no search results")
+        case .failure(let error):
+            return error.localizedDescription
+        default:
+            return nil
+        }
+    }
+    
+    var pages: [Page] {
+        switch state {
+        case .searching(let pages):
+            fallthrough
+        case .results(let pages, _):
+            return pages
+        default:
+            return []
+        }
+    }
+    
     @Published private(set) var state: State = .idle {
         didSet {
             searchCancellable?.cancel()
