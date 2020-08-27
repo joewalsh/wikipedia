@@ -6,7 +6,10 @@ struct WikipediaApp: App {
         WindowGroup {
             NavigationView {
                 SearchView(model: SearchViewModel())
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarHidden(true)
             }
+            .accentColor(.primary)
         }
     }
 }

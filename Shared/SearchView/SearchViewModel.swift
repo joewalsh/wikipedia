@@ -91,7 +91,7 @@ class SearchViewModel: ObservableObject {
     }
     
     func listItem(_ page: Page) -> NavigationLink<Text, PageView> {
-        NavigationLink(destination: PageView(page: page)) {
+        NavigationLink(destination: PageView(model: PageViewModel(page: page))) {
             Text(page.id.title)
         }
     }

@@ -22,3 +22,15 @@ extension Page.Identifier: Hashable {
         hasher.combine(title)
     }
 }
+
+extension Page {
+    var contentURL: URL {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "\(id.wiki.language.rawValue).wikipedia.org"
+        components.percentEncodedPath = "/api/rest_v1/page/mobile-html/\(id.title.addingPercentEncoding(withAllowedCharacters: .encodeURIComponentAllowed) ?? id.title)"
+        return components.url!
+    }
+}
+
+
