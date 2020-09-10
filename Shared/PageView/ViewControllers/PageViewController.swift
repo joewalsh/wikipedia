@@ -36,7 +36,7 @@ class PageViewController: UIViewController {
     override func loadView() {
         view = webView
         do {
-            try messagingController.setup(with: webView, language: "en", theme: theme, layoutMargins: view.layoutMargins, leadImageHeight: 0, areTablesInitiallyExpanded: false, userGroups: [])
+            try messagingController.setup(with: webView, language: pageViewModel.page.id.wiki.language.rawValue, theme: theme, layoutMargins: view.layoutMargins, leadImageHeight: 0, areTablesInitiallyExpanded: false, userGroups: [])
         } catch let error {
             Logger.standard.error("Error setting up messaging controller: \(error as NSObject)")
         }

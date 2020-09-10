@@ -33,6 +33,8 @@ class SearchViewModel: ObservableObject {
             searchCancellable = nil
         }
     }
+    
+    let wiki = Wikipedia(language: .ar)
 
     enum State {
         case idle
@@ -52,7 +54,8 @@ class SearchViewModel: ObservableObject {
             }
     }
     
-    private let actionAPI: ActionAPIInterface = ActionAPIService(site: Wikipedia(language: .en))
+    
+    private lazy var actionAPI: ActionAPIInterface = ActionAPIService(site: wiki)
     
     private var searchCancellable: AnyCancellable?
     

@@ -9,6 +9,7 @@ struct SearchView: View {
                            searchTextBinding: $model.term,
                            statusMessage: model.statusMessage,
                            onPaginate: model.onPaginate)
+            .environment(\.layoutDirection, model.wiki.language.isRTL ? .rightToLeft : .leftToRight)
     }
 }
 

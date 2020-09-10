@@ -11,6 +11,15 @@ enum Host: String {
 public struct Wikipedia: SiteInterface {
     enum Language: String {
         case en
+        case ar
+        var isRTL: Bool {
+            switch self {
+            case .ar:
+                return true
+            default:
+                return false
+            }
+        }
     }
     let language: Language
     var host: String {
