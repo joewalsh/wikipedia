@@ -34,7 +34,7 @@ class SearchViewModel: ObservableObject {
         }
     }
     
-    let wiki = Wikipedia(language: .ar)
+    let wiki = Wikipedia(language: .en)
 
     enum State {
         case idle
